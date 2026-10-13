@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>待辦清單 · Lists</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              canvas: "#eef0f3",
+              ink: "#1c1f26",
+              slate: "#2b303b",
+              mist: "#f6f7f9",
+              ember: "#c45c4a",
+            },
+            fontFamily: {
+              sans: ["Inter", "Noto Sans TC", "system-ui", "sans-serif"],
+            },
+            boxShadow: {
+              soft: "0 10px 30px -18px rgba(28, 31, 38, 0.45)",
+              lift: "0 18px 40px -20px rgba(28, 31, 38, 0.55)",
+            },
+          },
+        },
+      };
+    </script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="bg-canvas text-ink font-sans antialiased min-h-screen">
+    <div class="app-shell">
+      <div id="sidebar-backdrop" class="sidebar-backdrop" hidden></div>
+
+      <aside id="sidebar" class="sidebar">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <p class="text-xs tracking-[0.22em] uppercase text-white/50">Workspace</p>
+            <h1 class="text-xl font-semibold text-white mt-1">Lists</h1>
+          </div>
+          <button id="close-sidebar" class="lg:hidden icon-btn text-white/70" aria-label="關閉選單">
+            ✕
+          </button>
+        </div>
+
+        <nav class="space-y-1" id="list-nav" aria-label="清單切換"></nav>
+
+        <form id="new-list-form" class="mt-6">
+          <label class="block text-xs text-white/50 mb-2">新增自訂清單</label>
+          <div class="flex gap-2">
+            <input
+              id="new-list-name"
+              type="text"
+              maxlength="24"
+              placeholder="例如：工作"
+              class="flex-1 rounded-xl bg-white/10 border border-white/10 px-3 py-2 text-sm text-white placeholder:text-white/35 outline-none focus:border-white/30"
+            />
+            <button type="submit" class="rounded-xl bg-white text-ink px-3 py-2 text-sm font-medium hover:bg-mist transition">
+              新增
+            </button>
+          </div>
+        </form>
+      </aside>
+
+      <main class="main-panel">
+        <header class="flex items-start justify-between gap-4 mb-8">
+          <div class="flex items-start gap-3">
+            <button id="open-sidebar" class="lg:hidden icon-btn mt-1" aria-label="開啟選單">☰</button>
+            <div>
+              <p class="text-sm text-slate/60" id="view-kicker">所有清單</p>
+              <h2 class="text-3xl font-semibold tracking-tight" id="view-title">所有清單</h2>
+              <p class="text-sm text-slate/55 mt-1" id="view-meta">0 項待辦</p>
+            </div>
+          </div>
+          <button id="open-add-task" class="primary-btn">＋ 新增事項</button>
+        </header>
+
+        <section id="task-list" class="space-y-3"></section>
+        <p id="empty-state" class="empty-state" hidden>目前沒有事項，點右上角新增一筆。</p>
+      </main>
+    </div>
+
+    <dialog id="task-modal" class="modal">
+      <form id="task-form" method="dialog" class="modal-card">
+        <div class="flex items-center justify-between mb-5">
+          <h3 id="modal-title" class="text-lg font-semibold">新增事項</h3>
+          <button type="button" id="close-modal" class="icon-btn" aria-label="關閉">✕</button>
+        </div>
+
+        <input type="hidden" id="task-id" />
+
+        <label class="field-label" for="task-title">事項名稱</label>
+        <input id="task-title" type="text" required maxlength="80" class="field" placeholder="要完成什麼？" />
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+          <div>
+            <label class="field-label" for="task-priority">優先順序</label>
+            <select id="task-priority" class="field">
+              <option value="normal">普通 (Normal)</option>
+              <option value="urgent">緊急 (Urgent)</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label" for="task-due">截止日期</label>
+            <input id="task-due" type="date" class="field" />
+          </div>
+        </div>
+
+        <label class="field-label mt-4" for="task-list">所屬清單</label>
+        <select id="task-list" class="field" required></select>
+
+        <div class="flex justify-end gap-2 mt-6">
+          <button type="button" id="cancel-modal" class="ghost-btn">取消</button>
+          <button type="submit" class="primary-btn">儲存</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="confirm-modal" class="modal">
+      <div class="modal-card">
+        <h3 class="text-lg font-semibold mb-2">確認刪除</h3>
+        <p id="confirm-message" class="text-sm text-slate/70 mb-6">確定要刪除嗎？此動作無法復原。</p>
+        <div class="flex justify-end gap-2">
+          <button type="button" id="cancel-confirm" class="ghost-btn">取消</button>
+          <button type="button" id="ok-confirm" class="danger-btn">刪除</button>
+        </div>
+      </div>
+    </dialog>
+
+    <script src="app.js"></script>
+  </body>
+</html>
